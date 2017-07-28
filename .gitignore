@@ -1,0 +1,14 @@
+a.out
+.*.swp
+
+# don't include any reports
+crash-*
+slow-*
+
+# don't include the fuzzer the README tells people to build
+libFuzzer.a
+Fuzzer
+
+# ignore all corpus but the sample jpg
+jpegload_corpus/*
+!jpegload_corpus/sample.jpg
