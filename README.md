@@ -53,12 +53,17 @@ $ CC=$CLANG_DIR/clang CXX=$CLANG_DIR/clang++ CFLAGS="$FUZZ_FLAGS" CXXFLAGS="$FUZ
 
 ## Build `libFuzzer.a`
 
+You need to do this if your clang binary does not include the fuzzer (the
+prebuilt ones generally don't).
+
 ```
-git clone https://chromium.googlesource.com/chromium/llvm-project/llvm/lib/Fuzzer
-./Fuzzer/build.sh  
+$ git clone https://chromium.googlesource.com/chromium/llvm-project/llvm/lib/Fuzzer
+$ ./Fuzzer/build.sh  
 ```
 
 ## Build `jpegload_buffer_fuzz.c` against the custom libvips build
+
+With your own `libFuzzer.a`, as above.
 
 ```
 $ $CLANG_DIR/clang -fsanitize=address jpegload_buffer_fuzz.c libFuzzer.a `pkg-config vips --cflags --libs` -lstdc++
