@@ -26,7 +26,7 @@ $ cd ..
 $ mkdir clang-build && cd clang-build
 $ cmake -GNinja ../llvm-project/llvm -DLLVM_ENABLE_PROJECTS="clang;libcxx;libcxxabi;openmp;llvm;compiler-rt"
 $ ninja 
-``
+```
 
 It'll take many, many hours, you'll need > 10gb of memory (if running wth `-j 1`,
 much more otherwise) and > 100gb of disc. It'll leave the compiler in
@@ -102,7 +102,12 @@ $ $CLANG_DIR/clang -fsanitize=address jpegload_buffer_fuzz.c libFuzzer.a `pkg-co
 
 ### And run the fuzzer
 
+You need to tell address sanitiser where to find the stack trace symbolizer for
+your clang.
+
 ```
+$ export ASAN_SYMBOLIZER_PATH=$CLANG_DIR/llvm-symbolizer
+$ export ASAN_OPTIONS=symbolize=1
 $ ./a.out jpegload_corpus
 ```
 
