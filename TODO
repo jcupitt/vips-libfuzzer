@@ -1,0 +1,86 @@
+Current report:
+
+It's simply an empty file, causing a read one beyond in libjpeg as it looks for
+the initial SOI magic number.
+
+INFO: Seed: 2036426182
+INFO: Loaded 2 modules   (35546 guards): 4283 [0x7fb704f30d20, 0x7fb704f3500c), 31263 [0x7fb7077429c0, 0x7fb70776123c), 
+Loading corpus dir: jpegload_corpus
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 22552 bytes
+#0	READ units: 1
+=================================================================
+==13623==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x602000000e71 at pc 0x7fb704c78c06 bp 0x7ffe13219620 sp 0x7ffe13219618
+READ of size 1 at 0x602000000e71 thread T0
+    #0 0x7fb704c78c05 in first_marker /home/john/packages/jpeg/jpeg-9c/jdmarker.c:1070:3
+    #1 0x7fb704c738b1 in read_markers /home/john/packages/jpeg/jpeg-9c/jdmarker.c:1102:8
+    #2 0x7fb704c66932 in consume_markers /home/john/packages/jpeg/jpeg-9c/jdinput.c:569:11
+    #3 0x7fb704c2d14f in jpeg_consume_input /home/john/packages/jpeg/jpeg-9c/jdapimin.c:305:15
+    #4 0x7fb704c2cc61 in jpeg_read_header /home/john/packages/jpeg/jpeg-9c/jdapimin.c:253:13
+    #5 0x7fb7071b4c22 in read_jpeg_header (/home/john/vips/lib/libvips.so.42+0x5d8c22)
+    #6 0x7fb7071b3a3f in vips__jpeg_read (/home/john/vips/lib/libvips.so.42+0x5d7a3f)
+    #7 0x7fb7071b41cd in vips__jpeg_read_buffer (/home/john/vips/lib/libvips.so.42+0x5d81cd)
+    #8 0x7fb7071ba8f7 in vips_foreign_load_jpeg_buffer_header (/home/john/vips/lib/libvips.so.42+0x5de8f7)
+    #9 0x7fb70714c7bd in vips_foreign_load_build (/home/john/vips/lib/libvips.so.42+0x5707bd)
+    #10 0x7fb7071b9a5d in vips_foreign_load_jpeg_build (/home/john/vips/lib/libvips.so.42+0x5dda5d)
+    #11 0x7fb7072569df in vips_object_build (/home/john/vips/lib/libvips.so.42+0x67a9df)
+    #12 0x7fb7072909e8 in vips_cache_operation_buildp (/home/john/vips/lib/libvips.so.42+0x6b49e8)
+    #13 0x7fb7072ae41d in vips_call_required_optional (/home/john/vips/lib/libvips.so.42+0x6d241d)
+    #14 0x7fb7072b51df in vips_call_by_name (/home/john/vips/lib/libvips.so.42+0x6d91df)
+    #15 0x7fb7072b55a3 in vips_call_split (/home/john/vips/lib/libvips.so.42+0x6d95a3)
+    #16 0x7fb7071b92fe in vips_jpegload_buffer (/home/john/vips/lib/libvips.so.42+0x5dd2fe)
+    #17 0x4e8bfd in LLVMFuzzerTestOneInput (/home/john/GIT/vips-libfuzzer/a.out+0x4e8bfd)
+    #18 0x4f33ab in fuzzer::Fuzzer::ExecuteCallback(unsigned char const*, unsigned long) /home/john/GIT/Fuzzer/./FuzzerLoop.cpp:495:13
+    #19 0x4f3197 in fuzzer::Fuzzer::ShuffleAndMinimize(std::vector<std::vector<unsigned char, std::allocator<unsigned char> >, std::allocator<std::vector<unsigned char, std::allocator<unsigned char> > > >*) /home/john/GIT/Fuzzer/./FuzzerLoop.cpp:389:3
+    #20 0x4ed609 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /home/john/GIT/Fuzzer/./FuzzerDriver.cpp:749:6
+    #21 0x4e8d90 in main /home/john/GIT/Fuzzer/./FuzzerMain.cpp:20:10
+    #22 0x7fb7053fc3f0 in __libc_start_main /build/glibc-mXZSwJ/glibc-2.24/csu/../csu/libc-start.c:291
+    #23 0x41c6c9 in _start (/home/john/GIT/vips-libfuzzer/a.out+0x41c6c9)
+
+0x602000000e71 is located 0 bytes to the right of 1-byte region [0x602000000e70,0x602000000e71)
+allocated by thread T0 here:
+    #0 0x4bd9f3 in __interceptor_malloc (/home/john/GIT/vips-libfuzzer/a.out+0x4bd9f3)
+    #1 0x7fb70637caf7 in operator new(unsigned long) (/usr/lib/x86_64-linux-gnu/libstdc++.so.6+0x8faf7)
+    #2 0x4f3197 in fuzzer::Fuzzer::ShuffleAndMinimize(std::vector<std::vector<unsigned char, std::allocator<unsigned char> >, std::allocator<std::vector<unsigned char, std::allocator<unsigned char> > > >*) /home/john/GIT/Fuzzer/./FuzzerLoop.cpp:389:3
+    #3 0x4ed609 in fuzzer::FuzzerDriver(int*, char***, int (*)(unsigned char const*, unsigned long)) /home/john/GIT/Fuzzer/./FuzzerDriver.cpp:749:6
+    #4 0x4e8d90 in main /home/john/GIT/Fuzzer/./FuzzerMain.cpp:20:10
+    #5 0x7fb7053fc3f0 in __libc_start_main /build/glibc-mXZSwJ/glibc-2.24/csu/../csu/libc-start.c:291
+
+SUMMARY: AddressSanitizer: heap-buffer-overflow /home/john/packages/jpeg/jpeg-9c/jdmarker.c:1070:3 in first_marker
+Shadow bytes around the buggy address:
+  0x0c047fff8170: fa fa 00 00 fa fa 00 00 fa fa 00 00 fa fa 00 00
+  0x0c047fff8180: fa fa 00 00 fa fa 00 00 fa fa 00 fa fa fa 00 00
+  0x0c047fff8190: fa fa 00 00 fa fa 00 fa fa fa 00 00 fa fa 00 00
+  0x0c047fff81a0: fa fa 00 00 fa fa 00 00 fa fa fd fa fa fa 06 fa
+  0x0c047fff81b0: fa fa 00 01 fa fa 00 01 fa fa 07 fa fa fa 00 03
+=>0x0c047fff81c0: fa fa 06 fa fa fa 00 01 fa fa 05 fa fa fa[01]fa
+  0x0c047fff81d0: fa fa 00 fa fa fa 04 fa fa fa 00 00 fa fa 00 01
+  0x0c047fff81e0: fa fa fd fa fa fa fd fa fa fa 07 fa fa fa 00 fa
+  0x0c047fff81f0: fa fa 00 01 fa fa 06 fa fa fa 07 fa fa fa 06 fa
+  0x0c047fff8200: fa fa 00 fa fa fa 06 fa fa fa 06 fa fa fa 00 01
+  0x0c047fff8210: fa fa 00 fa fa fa 07 fa fa fa 07 fa fa fa 00 01
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+==13623==ABORTING
+MS: 0 ; base unit: 0000000000000000000000000000000000000000
+
+
+artifact_prefix='./'; Test unit written to ./crash-da39a3ee5e6b4b0d3255bfef95601890afd80709
+Base64: 
+
