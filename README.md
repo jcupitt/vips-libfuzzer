@@ -58,7 +58,7 @@ Build the 9c development version.
 ```
 $ cd jpeg-9c
 $ export CLANG_DIR=/home/john/GIT/clang/bin
-$ export FUZZ_FLAGS="-fsanitize-coverage=trace-pc-guard -fsanitize=address"
+$ export FUZZ_FLAGS="-g -fsanitize-coverage=trace-pc-guard -fsanitize=address"
 $ CC=$CLANG_DIR/clang CFLAGS="$FUZZ_FLAGS" ./configure --prefix=/home/john/vips 
 ```
 
@@ -70,10 +70,10 @@ $ CC=$CLANG_DIR/clang CXX=$CLANG_DIR/clang++ \
     CFLAGS="$FUZZ_FLAGS" CXXFLAGS="$FUZZ_FLAGS" \
     ./autogen.sh --prefix=/home/john/vips \
         --with-jpeg-includes=/home/john/vips/include \
-        --with-jpeg-libraries=/home/john/vips/lib
+        --with-jpeg-libraries=/home/john/vips/lib \
+	--without-magick
 ```
 
-If you are using an older clang, you need to add `--without-magick`.
 Imagemagick uses `-lomp`, which the prebuilt clang does not support.
 
 ## Build `libFuzzer.a`
@@ -91,16 +91,16 @@ $ ./Fuzzer/build.sh
 If you have the latest clang:
 
 ```
-$ $CLANG_DIR/clang -fsanitize=fuzzer,address jpegload_buffer_fuzz.c `pkg-config vips --cflags --libs` -lstdc++
+$ $CLANG_DIR/clang -g -fsanitize=fuzzer,address jpegload_buffer_fuzz.c `pkg-config vips --cflags --libs` -lstdc++
 ```
 
 If you made your own fuzzer, you need:
 
 ```
-$ $CLANG_DIR/clang -fsanitize=address jpegload_buffer_fuzz.c libFuzzer.a `pkg-config vips --cflags --libs` -lstdc++
+$ $CLANG_DIR/clang -g -fsanitize=address jpegload_buffer_fuzz.c libFuzzer.a `pkg-config vips --cflags --libs` -lstdc++
 ```
 
-### And run the fuzzer
+### Run the fuzzer
 
 You need to tell address sanitiser where to find the stack trace symbolizer for
 your clang.
@@ -111,3 +111,11 @@ $ export ASAN_OPTIONS=symbolize=1
 $ ./a.out jpegload_corpus
 ```
 
+### Debug a crash
+
+```
+$ $CLANG_DIR/clang -g -fsanitize=address jpegload_buffer_fuzz.c main.c `pkg-config vips --cflags --libs`
+$ ASAN_OPTIONS=abort_on_error=1 gdb -ex r --args ./a.out crash-xxxxx
+```
+
+`up` a few times and you should be able to see what's going on. 
