@@ -4,6 +4,19 @@ See:
 
 http://llvm.org/docs/LibFuzzer.html
 
+https://github.com/jcupitt/libvips
+
+## Status
+
+The test is to load a small jpeg from a memory buffer and calculate the
+image average. It currently runs on my desktop for at least three hours
+with no problems.
+
+We need to add some more tests, perhaps tiff load from buffer and jpeg
+save to buffer.
+
+# Setup and test
+
 There are two main routes: building your own clang, which needs a huge PC, or
 using an older prebuilt binary.
 
