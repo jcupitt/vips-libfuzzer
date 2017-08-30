@@ -9,6 +9,12 @@ slow-*
 libFuzzer.a
 Fuzzer
 
-# ignore all corpus but the sample jpg
+# ignore all corpus but the sample 
 jpegload_corpus/*
 !jpegload_corpus/sample.jpg
+
+pngload_corpus/*
+!pngload_corpus/sample.png
+
+tiffload_corpus/*
+!tiffload_corpus/sample.tif

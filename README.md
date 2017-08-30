@@ -9,8 +9,8 @@ https://github.com/jcupitt/libvips
 ## Status
 
 The test is to load a small jpeg from a memory buffer and calculate the
-image average. It currently runs on my desktop for at least three hours
-with no problems.
+image average. It currently runs on my desktop for at least 23000 minutes of
+CPU time with no problems.
 
 We need to add some more tests, perhaps tiff load from buffer and jpeg
 save to buffer.
@@ -132,3 +132,7 @@ $ ASAN_OPTIONS=abort_on_error=1 gdb -ex r --args ./a.out crash-xxxxx
 ```
 
 `up` a few times and you should be able to see what's going on. 
+
+### TIFF and PNG 
+
+Repeat the jpeg steps, with the obvious changes. 
